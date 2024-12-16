@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <title>talk</title>
+  </head>
+  <style>
+    button {
+        font-size: 6cqh;
+        margin: 0.2em;
+        background: white;
+    }
+  </style>
+  <script>
+    function loadDef() {
+      const hash = document.location.hash.substr(1);
+      if (hash[0] != "[") {
+        return [["lol"], ["foo", "bar"]];
+      }
+
+      return JSON.parse(decodeURIComponent(hash));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      let buttonDefinitions;
+      try {
+        buttonDefinitions = loadDef();
+      } catch (e) {
+        document.body.appendChild(document.createTextNode("error: " + e));
+        throw e;
+      }
+
+      const table = document.getElementById("buttons");
+      const link = document.getElementById("output");
+      //for (const row of buttonDefinitions) {
+      for (let i = 0; i < 3; ++i) {
+        const tr = document.createElement("tr");
+        for (let j = 0; j < 5; ++j) {
+        //for (const label of row) {
+          const td = document.createElement("td");
+          const button = document.createElement("button");
+          if (i < buttonDefinitions.length && j < buttonDefinitions[i].length) {
+            const label = buttonDefinitions[i][j];
+            const message = label.replace(/[^\p{L}\p{N}\p{P}\p{Z}]/gu, " ");
+            console.log(label, message)
+            const utterance = new SpeechSynthesisUtterance(message);
+            button.addEventListener("click", () => {
+              speechSynthesis.speak(utterance);
+            });
+            button.appendChild(document.createTextNode(label));
+          }
+          td.appendChild(button);
+          tr.appendChild(td);
+        }
+        table.appendChild(tr);
+      }
+    });
+  </script>
+  <body>
+    <table id="buttons">
+    </table>
+  </body>
+</html>

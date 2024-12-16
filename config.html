@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <title>talk</title>
+  </head>
+  <script>
+    function loadDef() {
+      const hash = document.location.hash.substr(1);
+      if (hash[0] != "[") {
+        return [["lol"], ["foo", "bar"]];
+      }
+
+      return JSON.parse(decodeURIComponent(hash));
+    }
+
+    function rewriteURL(table, link) {
+      const def = [];
+      for (const tr of table.children) {
+        if (tr.tagName.toLowerCase() != "tr") {
+          continue;
+        }
+        const row = [];
+        for (const td of tr.children) {
+          if (td.tagName.toLowerCase() != "td") {
+            continue;
+          }
+          for (const input of td.children) {
+            if (input.tagName.toLowerCase() != "input") {
+              continue;
+            }
+            row.push(input.value);
+          }
+        }
+        def.push(row);
+      }
+      document.location.hash = JSON.stringify(def);
+      let url = document.location.href.replace("/config.html", "/view.html");
+      link.href = url;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      let buttonDefinitions;
+      try {
+        buttonDefinitions = loadDef();
+      } catch (e) {
+        document.body.appendChild(document.createTextNode("error: " + e));
+        throw e;
+      }
+
+      const table = document.getElementById("buttons");
+      const link = document.getElementById("output");
+      //for (const row of buttonDefinitions) {
+      for (let i = 0; i < 3; ++i) {
+        const tr = document.createElement("tr");
+        for (let j = 0; j < 5; ++j) {
+        //for (const label of row) {
+          const td = document.createElement("td");
+          const box = document.createElement("input");
+          if (i < buttonDefinitions.length && j < buttonDefinitions[i].length) {
+            box.value = buttonDefinitions[i][j];
+          }
+          box.addEventListener("input", () => { rewriteURL(table, link); } );
+          td.appendChild(box);
+          tr.appendChild(td);
+        }
+        table.appendChild(tr);
+      }
+      rewriteURL(table, link);
+    });
+  </script>
+  <body>
+    <table id="buttons">
+    </table>
+    <p>
+      <a href="" id="output">use this link</a>
+    </p>
+  </body>
+</html>
