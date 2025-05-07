@@ -2,6 +2,39 @@
 <html>
     <head>
         <title>wait</title>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+                font-family: sans-serif;
+            }
+            .progress {
+                display: grid;
+                grid-template-rows: 1fr 1fr 2fr;
+                box-sizing: border-box;
+                height: 100vh;
+            }
+            .progress * {
+                margin: 0;
+            }
+
+            .progress button {
+                margin: 1vh;
+                grid-row: 1 / 2;
+                font-size: 12vh;
+            }
+            .progress p {
+                grid-row: 2 / 3;
+                font-size: 20vh;
+                text-align: center;
+            }
+
+            .progress progress {
+                border: none;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
         <script>
             function sayWord(message) {
                 let utterance = new SpeechSynthesisUtterance(message);
@@ -40,15 +73,15 @@
                     }
 
                     start = new Date().getTime() / 1000;
-                    interval = window.setInterval(tick, 100);
+                    interval = window.setInterval(tick, 1000/60);
                     sayWord("Wait");
                 });
             });
         </script>
     </head>
     <body>
-        <button id="wait-button">Wait</button>
-        <div>
+        <div class="progress">
+            <button id="wait-button">Wait</button>
             <p id="progress-time"></p>
             <progress id="progress-bar" value="0"></progress>
         </div>
