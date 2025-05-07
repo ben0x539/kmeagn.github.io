@@ -3,6 +3,9 @@
     <head>
         <title>wait</title>
         <style>
+            html {
+                scrollbar-width: none;
+            }
             body {
                 padding: 0;
                 margin: 0;
@@ -34,6 +37,14 @@
                 width: 100%;
                 height: 100%;
             }
+
+            .wait-time {
+                font-size: 20pt;
+            }
+            .wait-time input {
+                width: 4em;
+                font-size: 20pt;
+            }
         </style>
         <script>
             function sayWord(message) {
@@ -41,39 +52,46 @@
                 speechSynthesis.speak(utterance);
             }
 
-            const waitTime = 10;
+            let waitTime = 10;
             let start = null;
             let interval = null;
             let progressBar;
             let progressTime;
+            let waitTimeInput;
 
             function tick() {
                 const now = new Date().getTime() / 1000;
                 const elapsed = now - start;
                 console.log({start, now, elapsed});
                 if (elapsed < waitTime) {
-                    progressTime.textContent = Math.ceil(waitTime - elapsed);
+                    let display = Math.ceil(waitTime - elapsed);
+                    if (waitTime > 60) {
+                        display = Math.floor(display / 60) + ":" + (display % 60).toString().padStart(2, "0");
+                    }
+                    progressTime.textContent = display;
                     progressBar.value = elapsed / waitTime;
+                    window.requestAnimationFrame(tick);
                     return;
                 }
 
                 progressTime.textContent = "All done";
-                window.clearInterval(interval);
-                interval = null;
+                start = null;
                 sayWord("All done");
             }
 
             document.addEventListener("DOMContentLoaded", () => {
                 progressBar = document.getElementById("progress-bar");
                 progressTime = document.getElementById("progress-time");
+                const waitTimeInput = document.getElementById("wait-time-input");
                 const button = document.getElementById("wait-button");
                 button.addEventListener("click", () => {
-                    if (interval !== null) {
+                    if (start !== null) {
                         return;
                     }
 
+                    waitTime = Number.parseInt(waitTimeInput.value);
                     start = new Date().getTime() / 1000;
-                    interval = window.setInterval(tick, 1000/60);
+                    window.requestAnimationFrame(tick);
                     sayWord("Wait");
                 });
             });
@@ -84,6 +102,9 @@
             <button id="wait-button">Wait</button>
             <p id="progress-time"></p>
             <progress id="progress-bar" value="0"></progress>
+        </div>
+        <div class="wait-time">
+            <p>Wait time: <input id="wait-time-input" type="number" min="1" value="10"> seconds</p>
         </div>
     </body>
 </html>
