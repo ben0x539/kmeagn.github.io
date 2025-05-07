@@ -19,11 +19,12 @@
                 const elapsed = now - start;
                 console.log({start, now, elapsed});
                 if (elapsed < waitTime) {
-                    progressTime.textContent = Math.round(waitTime - elapsed);
+                    progressTime.textContent = Math.ceil(waitTime - elapsed);
                     progressBar.value = elapsed / waitTime;
                     return;
                 }
 
+                progressTime.textContent = "All done";
                 window.clearInterval(interval);
                 interval = null;
                 sayWord("All done");
