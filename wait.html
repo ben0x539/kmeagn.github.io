@@ -11,14 +11,16 @@
             const waitTime = 10;
             let start = null;
             let interval = null;
-            let progress;
+            let progressBar;
+            let progressTime;
 
             function tick() {
                 const now = new Date().getTime() / 1000;
                 const elapsed = now - start;
                 console.log({start, now, elapsed});
                 if (elapsed < waitTime) {
-                    progress.value = elapsed / waitTime;
+                    progressTime.textContent = Math.round(waitTime - elapsed);
+                    progressBar.value = elapsed / waitTime;
                     return;
                 }
 
@@ -28,7 +30,8 @@
             }
 
             document.addEventListener("DOMContentLoaded", () => {
-                progress = document.getElementById("wait-progress");
+                progressBar = document.getElementById("progress-bar");
+                progressTime = document.getElementById("progress-time");
                 const button = document.getElementById("wait-button");
                 button.addEventListener("click", () => {
                     if (interval !== null) {
@@ -45,7 +48,8 @@
     <body>
         <button id="wait-button">Wait</button>
         <div>
-            <progress id="wait-progress" value="0"></progress>
+            <p id="progress-time"></p>
+            <progress id="progress-bar" value="0"></progress>
         </div>
     </body>
 </html>
