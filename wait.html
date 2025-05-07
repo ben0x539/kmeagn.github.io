@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+    <head>
+        <title>wait</title>
+        <script>
+            function sayWord(message) {
+                let utterance = new SpeechSynthesisUtterance(message);
+                speechSynthesis.speak(utterance);
+            }
+
+            const waitTime = 10;
+            let start = null;
+            let interval = null;
+            let progress;
+
+            function tick() {
+                const now = new Date().getTime() / 1000;
+                const elapsed = now - start;
+                console.log({start, now, elapsed});
+                if (elapsed < waitTime) {
+                    progress.value = elapsed / waitTime;
+                    return;
+                }
+
+                window.clearInterval(interval);
+                interval = null;
+                sayWord("All done");
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                progress = document.getElementById("wait-progress");
+                const button = document.getElementById("wait-button");
+                button.addEventListener("click", () => {
+                    if (interval !== null) {
+                        return;
+                    }
+
+                    start = new Date().getTime() / 1000;
+                    interval = window.setInterval(tick, 100);
+                    sayWord("Wait");
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <button id="wait-button">Wait</button>
+        <div>
+            <progress id="wait-progress" value="0"></progress>
+        </div>
+    </body>
+</html>
